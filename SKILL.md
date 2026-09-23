@@ -27,11 +27,16 @@ agent_created: true
 脚本无第三方依赖（仅标准库），任意 python3 均可运行。
 
 ```bash
-PY="python3"
-# 注意：脚本位于本 skill 的 scripts/ 目录下
-SKILL_DIR="$HOME/.workbuddy/skills/wechat-md-verify"
-"$PY" "$SKILL_DIR/scripts/verify_wechat_md.py" "<obsidian.md 路径>"
+# 从 skill 目录用「相对路径」调用，跨平台最稳
+cd ~/.workbuddy/skills/wechat-md-verify
+python3 scripts/verify_wechat_md.py "<obsidian.md 路径>"
 ```
+
+> ⚠️ **Windows / Git Bash 注意**：`$HOME` 会展开成 `/c/Users/...`（MSYS 风格），
+> 而原生 Windows Python **不认**这种路径 —— 会报
+> `can't open file 'c:\c\Users\...': No such file or directory`。
+> 所以别把 `$HOME/...` 直接当参数传给 Python：`cd` 进去用相对路径（如上），
+> 或把脚本路径写成 `C:/Users/...`，或用 `cygpath -w` 转换。
 
 可选参数：
 - `--images "<自定义 images 目录>"`：默认取 md 同级的 `images/`。
@@ -74,9 +79,10 @@ Tier-1 只能证明「结构完整」，证明不了「内容对不对」。满�
 
 ```bash
 cd "<你的公众号项目根>"
-PY="python3"
-SKILL_DIR="$HOME/.workbuddy/skills/wechat-md-verify"
-for md in output/*/*.obsidian.md; do "$PY" "$SKILL_DIR/scripts/verify_wechat_md.py" "$md"; done
+# Windows(Git Bash) 需把 MSYS 路径转成 Windows 路径；其它平台没有 cygpath 时原样返回
+winpath() { cygpath -w "$1" 2>/dev/null || printf '%s' "$1"; }
+VERIFY="$(winpath "$HOME/.workbuddy/skills/wechat-md-verify/scripts/verify_wechat_md.py")"
+for md in output/*/*.obsidian.md; do python3 "$VERIFY" "$md"; done
 ```
 
 ## Resources

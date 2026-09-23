@@ -28,9 +28,9 @@
 命令：
 
 ```bash
-PY="python3"
-SKILL_DIR="$HOME/.workbuddy/skills/wechat-md-verify"
-"$PY" "$SKILL_DIR/scripts/verify_wechat_md.py" "output/<标题>/<标题>.obsidian.md"
+# 相对路径调用最稳（Windows/Git Bash 下 $HOME 是 /c/...，Python 打不开，见 SKILL.md 提示）
+cd ~/.workbuddy/skills/wechat-md-verify
+python3 scripts/verify_wechat_md.py "<项目根>/output/<标题>/<标题>.obsidian.md"
 # 可选：--images "<自定义images目录>"   --strict（把 WARN 也当失败）
 ```
 
@@ -82,9 +82,10 @@ Tier-1 只能证明"结构完整"，证明不了"内容对不对"。以下三类
 
 ```bash
 cd "<你的公众号项目根>"
-PY="python3"
-SKILL_DIR="$HOME/.workbuddy/skills/wechat-md-verify"
-for md in output/*/*.obsidian.md; do "$PY" "$SKILL_DIR/scripts/verify_wechat_md.py" "$md"; done
+# Windows(Git Bash) 需把 MSYS 路径转成 Windows 路径；其它平台没有 cygpath 时原样返回
+winpath() { cygpath -w "$1" 2>/dev/null || printf '%s' "$1"; }
+VERIFY="$(winpath "$HOME/.workbuddy/skills/wechat-md-verify/scripts/verify_wechat_md.py")"
+for md in output/*/*.obsidian.md; do python3 "$VERIFY" "$md"; done
 ```
 
 ---

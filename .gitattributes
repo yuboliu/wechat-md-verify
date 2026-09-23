@@ -1,0 +1,11 @@
+# 仓库内一律 LF。
+#
+# Windows 上 core.autocrlf=true 会把工作区写成 CRLF，于是同内容的两个副本
+# （本地保留版 vs 从仓库 checkout 的版本）用 diff 比会显示「整个文件都改了」，
+# 实际一字不差 —— 排查差异时极易误判。显式声明行尾，让仓库与机器设置解耦。
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
